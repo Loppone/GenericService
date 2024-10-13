@@ -19,12 +19,10 @@ public class GenericService<TMODEL,TDATA> : IGenericService<TMODEL>
         var dataEntity = _mapper.Map<TDATA>(entity);
         await _repository.AddAsync(dataEntity);
 
-        var idValue = entity.GetType().GetProperty("Id")?.GetValue(entity);
+        var idValue = dataEntity.GetType().GetProperty("Id")?.GetValue(dataEntity);
 
-        if (idValue != null)
-        {
-            // Eccezione
-        }
+        if (idValue == null)
+            throw new Exception("Errore inserimento!");
 
         return (int)idValue!;
     }
@@ -40,7 +38,7 @@ public class GenericService<TMODEL,TDATA> : IGenericService<TMODEL>
         var dataEntity = await _repository.GetByIdAsync(id);
         if (dataEntity == null)
         {
-            // Gestione dato non trovato!
+            throw new Exception("Not found!");
         }
 
         await _repository!.DeleteAsync(id);
